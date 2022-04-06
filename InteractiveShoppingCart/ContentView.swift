@@ -43,107 +43,116 @@ struct ContentView: View {
     ]
     
     var body: some View{
+        
+        NavigationView{
+            
         ZStack{
             LinearGradient(
                 gradient: Gradient(colors:   [.blue,.red]),
                 startPoint: .topLeading, endPoint: .bottomTrailing)
                 .edgesIgnoringSafeArea(.all)
             
-            
+           
+                
             VStack{
-                
-                HStack(spacing:10){
-                    Text("Item Name").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.white)
-                    Text("Item Price").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.white)
-                    Text("Item Image").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.white)
-                    
-                    
-                }.padding(.bottom,10)
-                ScrollView{
-                    ForEach(itemData, id: \.id) { food in
-                        
-                        listEntry(name:food.itemName, price:food.itemPrice, image:food.ItemImagePath)
+                    NavigationLink(destination: cartScreen()) {
+                                   cartLink()
                     }
-                }.frame(height:300)
-                
-                HStack(spacing:20){
-                    Button{
-                        //print(selectedFood)
-                        selectedQuantity = selectedQuantity+1
-                        //print(selectedQuantity)
+                    
+                    HStack(spacing:10){
+                        Text("Item Name").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.white)
+                        Text("Item Price").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.white)
+                        Text("Item Image").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.white)
                         
-                    }label:{
-                        Image(systemName
-                              : "plus.square.fill")
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode
-                                         :.fit)
-                            .frame(width : 80, height : 80)
-                            .foregroundColor(.green)
-                    }
-                    selectFoodDropdown(isSelected:$isSelected,selectedFood: $selectedFood, selectedQuantity: $selectedQuantity,itemData: $itemData)
-                    
-                    
-                    
-                    Button{
-                        if(!(selectedQuantity==0)){
-                            selectedQuantity = selectedQuantity-1
+                        
+                    }.padding(.bottom,10)
+                    ScrollView{
+                        ForEach(itemData, id: \.id) { food in
+                            
+                            listEntry(name:food.itemName, price:food.itemPrice, image:food.ItemImagePath)
                         }
-                        //print(selectedFood)
-                        //print(selectedQuantity)
+                    }.frame(height:300)
+                    
+                    HStack(spacing:20){
+                        Button{
+                            //print(selectedFood)
+                            selectedQuantity = selectedQuantity+1
+                            //print(selectedQuantity)
+                            
+                        }label:{
+                            Image(systemName
+                                  : "plus.square.fill")
+                                .renderingMode(.original)
+                                .resizable()
+                                .aspectRatio(contentMode
+                                             :.fit)
+                                .frame(width : 80, height : 80)
+                                .foregroundColor(.green)
+                        }
+                        selectFoodDropdown(isSelected:$isSelected,selectedFood: $selectedFood, selectedQuantity: $selectedQuantity,itemData: $itemData)
                         
-                    }label:{
-                        Image(systemName
-                              : "minus.square.fill")
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode
-                                         :.fit)
-                            .frame(width : 80, height : 80)
+                        
+                        
+                        Button{
+                            if(!(selectedQuantity==0)){
+                                selectedQuantity = selectedQuantity-1
+                            }
+                            //print(selectedFood)
+                            //print(selectedQuantity)
+                            
+                        }label:{
+                            Image(systemName
+                                  : "minus.square.fill")
+                                .renderingMode(.original)
+                                .resizable()
+                                .aspectRatio(contentMode
+                                             :.fit)
+                                .frame(width : 80, height : 80)
+                            
+                        }
+                    }
+                    
+                    HStack(spacing:50){
+                        Text("Selected Item").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.black)
+                        Text("Quantity").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.black)
                         
                     }
-                }
-                
-                HStack(spacing:50){
-                    Text("Selected Item").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.black)
-                    Text("Quantity").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.black)
                     
-                }
-                
-                
-                HStack(){
-                    Text(selectedFood).font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.white).padding()
                     
-                    Text(isSelected ? "\(selectedQuantity)" : "").font(.system(size: 25, weight: .medium, design:.default))
-                        .foregroundColor(.white).padding()
-                    
-                }
-                HStack(){
-                    addItemButton(selectedFood: $selectedFood, orderHashMap: $orderHashMap, selectedQuantity: $selectedQuantity, itemPriceHashMap: $itemPriceHashMap,combinedCartPrice: $combinedCartPrice)
-                    
-                    deleteItemButton(alertBoolean: $alertBoolean, selectedFood: $selectedFood, orderHashMap: $orderHashMap, selectedQuantity: $selectedQuantity, maxItemsDeletable: $maxItemsDeletable, notEnoughToDelete: $notEnoughToDelete, itemNotInCart: $itemNotInCart, itemPriceHashMap: $itemPriceHashMap,combinedCartPrice: $combinedCartPrice)
-                }
-                
-                NavigationView {
-                    NavigationLink(destination: Text("Second View")) {
-                        Text("Hello, World!")
+                    HStack(){
+                        Text(selectedFood).font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.white).padding()
+                        
+                        Text(isSelected ? "\(selectedQuantity)" : "").font(.system(size: 25, weight: .medium, design:.default))
+                            .foregroundColor(.white).padding()
+                        
                     }
-                    .navigationTitle("Navigation")
+                    HStack(){
+                        addItemButton(selectedFood: $selectedFood, orderHashMap: $orderHashMap, selectedQuantity: $selectedQuantity, itemPriceHashMap: $itemPriceHashMap,combinedCartPrice: $combinedCartPrice)
+                        
+                        deleteItemButton(alertBoolean: $alertBoolean, selectedFood: $selectedFood, orderHashMap: $orderHashMap, selectedQuantity: $selectedQuantity, maxItemsDeletable: $maxItemsDeletable, notEnoughToDelete: $notEnoughToDelete, itemNotInCart: $itemNotInCart, itemPriceHashMap: $itemPriceHashMap,combinedCartPrice: $combinedCartPrice)
+                    }
+                   
+                    Spacer()
+                 
                 }
-            }
             
         }
+    }
+        
+        
+        
         
     }
     
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -221,7 +230,7 @@ struct addItemButton: View {
     @Binding var selectedQuantity:Int
     @Binding var itemPriceHashMap:[String:Double]
     @Binding var combinedCartPrice:Double
-
+    
     var body: some View {
         Button{
             var keyExists = orderHashMap[selectedFood] != nil
@@ -324,5 +333,77 @@ struct deleteItemButton: View {
         return alertMessage
         
     }
+    }
+}
+
+struct cartLink: View{
+    var body: some View{
+        HStack(spacing:20){
+            Text("Go To Cart").font(.system(size: 30, weight: .bold, design:.default))
+                .foregroundColor(.black)
+            Image(systemName
+                  : "cart.circle.fill")
+                .renderingMode(.original)
+                .resizable()
+                .aspectRatio(contentMode
+                             :.fit)
+                .frame(width : 50, height : 50)
+                .foregroundColor(.green)
+            
+            
+            
+        }.padding().border(Color.orange,width:10)
+        
+        
+        
+    }
+    
+    
+    
+    
+}
+
+struct cartScreen: View {
+    
+    var body: some View {
+        
+        NavigationView{
+            
+            ZStack{
+                LinearGradient(
+                    gradient: Gradient(colors:   [.red,.blue]),
+                    startPoint: .topLeading, endPoint: .bottomTrailing)
+                    .edgesIgnoringSafeArea(.all)
+                
+                
+               
+                
+                
+                
+        }
+    }
+    
+    
+    }
+}
+
+
+
+struct menuLink: View {
+    var body: some View {
+        HStack{
+            Text("Go To Menu").font(.system(size: 30, weight: .bold, design:.default))
+                .foregroundColor(.black)
+            Image(systemName
+                  : "menucard.fill")
+                .renderingMode(.original)
+                .resizable()
+                .aspectRatio(contentMode
+                             :.fit)
+                .frame(width : 50, height : 50)
+                .foregroundColor(.green)
+            
+            
+        }.border(Color.green,width:10)
     }
 }
