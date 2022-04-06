@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+struct dictKey:Identifiable{
+    var id = UUID()
+    var keyName:String
+    
+}
+
 struct Item:Identifiable{
     var id = UUID()
     var itemName:String
@@ -55,9 +61,7 @@ struct ContentView: View {
            
                 
             VStack{
-                    NavigationLink(destination: cartScreen()) {
-                                   cartLink()
-                    }
+                   
                     
                     HStack(spacing:10){
                         Text("Item Name").font(.system(size: 25, weight: .medium, design:.default))
@@ -137,13 +141,15 @@ struct ContentView: View {
                         
                         deleteItemButton(alertBoolean: $alertBoolean, selectedFood: $selectedFood, orderHashMap: $orderHashMap, selectedQuantity: $selectedQuantity, maxItemsDeletable: $maxItemsDeletable, notEnoughToDelete: $notEnoughToDelete, itemNotInCart: $itemNotInCart, itemPriceHashMap: $itemPriceHashMap,combinedCartPrice: $combinedCartPrice)
                     }
-                   
-                    Spacer()
-                 
+                Spacer()
+                NavigationLink(destination: cartScreen(orderHashMap: $orderHashMap,combinedCartPrice: $combinedCartPrice)) {
+                    cartLink()
+                    
                 }
+            }
             
         }
-    }
+        }
         
         
         
@@ -299,6 +305,8 @@ struct deleteItemButton: View {
                         quantityAndPrice(foodQuantity:deletedQuantity,foodPrice: roundedDeletedPrice)
                     }
                     combinedCartPrice = combinedCartPrice - (Double(selectedQuantity) * (itemPriceHashMap[selectedFood] ?? 0))
+                    combinedCartPrice = ((combinedCartPrice*100).rounded())/100
+                    
                     
                     
                 }
@@ -338,9 +346,8 @@ struct deleteItemButton: View {
 
 struct cartLink: View{
     var body: some View{
-        HStack(spacing:20){
-            Text("Go To Cart").font(.system(size: 30, weight: .bold, design:.default))
-                .foregroundColor(.black)
+       
+     
             Image(systemName
                   : "cart.circle.fill")
                 .renderingMode(.original)
@@ -349,13 +356,6 @@ struct cartLink: View{
                              :.fit)
                 .frame(width : 50, height : 50)
                 .foregroundColor(.green)
-            
-            
-            
-        }.padding().border(Color.orange,width:10)
-        
-        
-        
     }
     
     
@@ -364,46 +364,78 @@ struct cartLink: View{
 }
 
 struct cartScreen: View {
-    
+    @Binding var orderHashMap:[String:quantityAndPrice]
+    @Binding var combinedCartPrice:Double
     var body: some View {
         
-        NavigationView{
+        ZStack{
+            LinearGradient(
+                gradient: Gradient(colors:   [.red,.blue]),
+                startPoint: .topLeading, endPoint: .bottomTrailing)
+                .edgesIgnoringSafeArea(.all)
             
-            ZStack{
-                LinearGradient(
-                    gradient: Gradient(colors:   [.red,.blue]),
-                    startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .edgesIgnoringSafeArea(.all)
+            VStack{
+              
+                Text("Your Cart:").font(.system(size: 35, weight: .bold, design:.default))
+                    .foregroundColor(.black).padding().border(Color.blue,width:10)
+                var hashMapKeys = (orderHashMap.keys).map({ (value: String) ->dictKey  in
+                    return dictKey(id: UUID(), keyName: value)
+                })
                 
                 
-               
+                HStack{
+                    Text("Item").font(.system(size: 25, weight: .bold, design:.default)).frame(width: 120, height:80 )
+                    
+                    
+                    Text("Item Quantity").font(.system(size: 25, weight: .bold, design:.default)).frame(width: 120, height:80 )
+                    
+                    
+                    Text("Item Price").font(.system(size: 25, weight: .bold, design:.default)).frame(width: 120, height:80 )
+                    
+                }.padding().background(.red).border(Color.black,width:10)
+                ScrollView{
+                ForEach(hashMapKeys,id: \.id){ key in
+                    cartEntry(foodName:key.keyName, foodCount: orderHashMap[key.keyName]!.foodQuantity ?? 0, foodCost:orderHashMap[key.keyName]!.foodPrice ?? 0 )
+                    
+                }
+                }.frame(height:300)
+                var truncatedCartPrice =  String(format: "%.2f", combinedCartPrice)
+                Text("Your Subtotal:\t\t \(truncatedCartPrice)").font(.system(size: 25, weight: .bold, design:.default)).frame(width: 400, height:80 ).padding().background(.blue).border(Color.black,width:10)
                 
+                Spacer()
                 
-                
+            }
+            
+            
         }
-    }
-    
-    
+        
     }
 }
 
-
-
-struct menuLink: View {
-    var body: some View {
-        HStack{
-            Text("Go To Menu").font(.system(size: 30, weight: .bold, design:.default))
-                .foregroundColor(.black)
-            Image(systemName
-                  : "menucard.fill")
-                .renderingMode(.original)
-                .resizable()
-                .aspectRatio(contentMode
-                             :.fit)
-                .frame(width : 50, height : 50)
-                .foregroundColor(.green)
+struct cartEntry: View {
+    var foodName:String
+    var foodCount:Int
+    var foodCost:Double
+    
+    
+    var body: some View{
+        HStack(spacing:0){
+            Text(foodName).font(.system(size: 25, weight: .medium, design:.default)).frame(width: 120, height:80 )
+               
+            
+            Text("\(foodCount)").font(.system(size: 25, weight: .medium, design:.default)).frame(width: 120, height:80 )
+               
+            
+            Text(String(format: "%.2f", foodCost)).font(.system(size: 25, weight: .medium, design:.default)).frame(width: 120, height:80 )
+               
             
             
-        }.border(Color.green,width:10)
+        }.padding(10).background(.green).border(Color.black,width:10).padding(.bottom,10)
+        
+        
     }
+    
+    
 }
+
+
