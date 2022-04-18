@@ -183,7 +183,7 @@ struct listEntry: View {
             
             
             
-        }.frame(width: 400, height: 60).background(Color.red).padding(5)
+        }.frame(width: 400, height: 60).background(Color.red).padding(5).border(Color.black, width: 5)
     }
 }
 
